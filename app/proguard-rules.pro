@@ -21,5 +21,14 @@
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
-
+#type token missing parameter issue fix
+-keep class com.google.gson.reflect.TypeToken
+-keep class * extends com.google.gson.reflect.TypeToken
+-keep public class * implements java.lang.reflect.Type
 ##---------------End: proguard configuration for Gson  ----------
+#from missing_rules.txt.
+-dontwarn javax.annotation.Nullable
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.OpenSSLProvider
+#debug the proguard rules
+-dontobfuscate

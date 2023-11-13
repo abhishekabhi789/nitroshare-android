@@ -1,11 +1,10 @@
 package net.nitroshare.android.ui.explorer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -17,6 +16,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -26,16 +28,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * Adapter for displaying directory contents
  */
 class DirectoryAdapter extends ArrayAdapter<File> {
-
-    interface Listener {
-        void onAllItemsDeselected();
-        void onError(String message);
-    }
 
     private Context mContext;
     private Listener mListener;
@@ -43,12 +41,26 @@ class DirectoryAdapter extends ArrayAdapter<File> {
     private boolean mShowHidden;
     private boolean mCheckboxes = false;
     private SparseArray<File> mChecked = new SparseArray<>();
-
     private int mColor;
+
+    DirectoryAdapter(String directory, boolean showHidden, Context context, Listener listener) {
+        super(context, R.layout.view_simple_list_item_explorer, android.R.id.text1);
+        mContext = context;
+        mListener = listener;
+        mDirectory = directory;
+        mShowHidden = showHidden;
+
+        TypedValue typedValue = new TypedValue();
+        mContext.getTheme().resolveAttribute(R.attr.colorControlNormal, typedValue, true);
+        mColor = typedValue.data;
+
+        init();
+    }
 
     /**
      * Initialize the list of files
      */
+    @SuppressLint("StringFormatInvalid")
     private void init() {
         File[] files = new File(mDirectory).listFiles();
         if (files == null) {
@@ -70,20 +82,6 @@ class DirectoryAdapter extends ArrayAdapter<File> {
                 add(file);
             }
         }
-    }
-
-    DirectoryAdapter(String directory, boolean showHidden, Context context, Listener listener) {
-        super(context, R.layout.view_simple_list_item_explorer, android.R.id.text1);
-        mContext = context;
-        mListener = listener;
-        mDirectory = directory;
-        mShowHidden = showHidden;
-
-        TypedValue typedValue = new TypedValue();
-        mContext.getTheme().resolveAttribute(R.attr.colorControlNormal, typedValue, true);
-        mColor = typedValue.data;
-
-        init();
     }
 
     /**
@@ -180,13 +178,13 @@ class DirectoryAdapter extends ArrayAdapter<File> {
         );
         final ImageView imageView = (ImageView) view.findViewById(android.R.id.icon);
         imageView.setColorFilter(mColor);
-        Picasso.with(mContext)
+        Picasso.get()
                 .load(file)
                 .resizeDimen(R.dimen.explorer_icon_size, R.dimen.explorer_icon_size)
                 .centerCrop()
-                .placeholder(ContextCompat.getDrawable(
+                .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(
                         mContext, file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file
-                ))
+                )))
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -195,7 +193,7 @@ class DirectoryAdapter extends ArrayAdapter<File> {
                     }
 
                     @Override
-                    public void onError() {
+                    public void onError(Exception e) {
                     }
                 });
         View spacer = view.findViewById(R.id.spacer);
@@ -223,5 +221,11 @@ class DirectoryAdapter extends ArrayAdapter<File> {
             checkBox.setVisibility(View.GONE);
         }
         return view;
+    }
+
+    interface Listener {
+        void onAllItemsDeselected();
+
+        void onError(String message);
     }
 }

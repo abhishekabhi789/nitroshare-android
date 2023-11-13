@@ -1,5 +1,6 @@
 package net.nitroshare.android.transfer;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -63,7 +64,7 @@ public class TransferService extends Service {
             Log.i(TAG, "sending intent to stop service");
             intent.setAction(ACTION_STOP_LISTENING);
         }
-
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         // Android O doesn't allow certain broadcasts to start services as per usual
         if (start && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent);

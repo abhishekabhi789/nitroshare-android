@@ -50,7 +50,7 @@ public class Transfer implements Runnable {
     /**
      * Transfer header
      */
-    private class TransferHeader {
+    private static class TransferHeader {
         String name;
         String count;
         String size;

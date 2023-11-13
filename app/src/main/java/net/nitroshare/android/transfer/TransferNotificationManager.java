@@ -7,10 +7,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.StringRes;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.StringRes;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import android.util.Log;
 
 import net.nitroshare.android.R;
@@ -71,7 +71,7 @@ class TransferNotificationManager {
                 mService,
                 0,
                 new Intent(mService, TransferActivity.class),
-                0
+                PendingIntent.FLAG_IMMUTABLE
         );
 
         // Create the builder
@@ -230,7 +230,7 @@ class TransferNotificationManager {
                                     mService.getString(R.string.service_transfer_action_retry),
                                     PendingIntent.getService(
                                             mService, transferStatus.getId(),
-                                            intent, PendingIntent.FLAG_ONE_SHOT
+                                            intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
                                     )
                             ).build()
                     );
@@ -289,7 +289,7 @@ class TransferNotificationManager {
                                     new NotificationCompat.Action.Builder(
                                             R.drawable.ic_action_stop,
                                             mService.getString(R.string.service_transfer_action_stop),
-                                            PendingIntent.getService(mService, transferStatus.getId(), stopIntent, 0)
+                                            PendingIntent.getService(mService, transferStatus.getId(), stopIntent, PendingIntent.FLAG_IMMUTABLE)
                                     ).build()
                             )
                             .build()
@@ -307,7 +307,7 @@ class TransferNotificationManager {
                 mService,
                 id,
                 new Intent(Intent.ACTION_VIEW, Uri.parse(url)),
-                0
+                PendingIntent.FLAG_IMMUTABLE
         );
         mNotificationManager.notify(
                 id,

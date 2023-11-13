@@ -5,8 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Utility methods for checking permissions
@@ -17,11 +18,12 @@ public class Permissions {
 
     /**
      * Determine if the app has permission to access storage
+     *
      * @param context use this context for checking
      * @return true if permission exists
      */
     public static boolean haveStoragePermission(Context context) {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ||
                 ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -30,6 +32,7 @@ public class Permissions {
 
     /**
      * Request permission to access storage
+     *
      * @param activity use this activity for the request
      */
     public static void requestStoragePermission(Activity activity) {
@@ -42,6 +45,7 @@ public class Permissions {
 
     /**
      * Determine if storage access permission was granted
+     *
      * @return true if permission was granted
      */
     public static boolean obtainedStoragePermission(int requestCode, int[] grantResuts) {
